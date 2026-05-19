@@ -467,7 +467,13 @@
     .footer-note a:hover { color: var(--text); }
 
     /* ── CUSTOM CURSOR ──────────────────────────────── */
-    * { cursor: none !important; }
+    @media (hover: hover) and (pointer: fine) {
+      * { cursor: none !important; }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      #cursor-dot, #cursor-ring { display: none !important; }
+    }
 
     #cursor-dot {
       position: fixed;
@@ -704,30 +710,32 @@
 </div>
 
 <script>
-  // Dot + ring cursor
-  const dot  = document.getElementById('cursor-dot');
-  const ring = document.getElementById('cursor-ring');
-  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
-  let rx = mx, ry = my;
+  // Dot + ring cursor — desktop only
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const dot  = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+    let rx = mx, ry = my;
 
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left = mx + 'px';
-    dot.style.top  = my + 'px';
-  });
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px';
+      dot.style.top  = my + 'px';
+    });
 
-  (function lerpRing() {
-    rx += (mx - rx) * 0.10;
-    ry += (my - ry) * 0.10;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    requestAnimationFrame(lerpRing);
-  })();
+    (function lerpRing() {
+      rx += (mx - rx) * 0.10;
+      ry += (my - ry) * 0.10;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(lerpRing);
+    })();
 
-  document.querySelectorAll('a, button, .card, .edu-card, .nav-item, .social-link').forEach(el => {
-    el.addEventListener('mouseenter', () => { dot.classList.add('hovering'); ring.classList.add('hovering'); });
-    el.addEventListener('mouseleave', () => { dot.classList.remove('hovering'); ring.classList.remove('hovering'); });
-  });
+    document.querySelectorAll('a, button, .card, .edu-card, .nav-item, .social-link').forEach(el => {
+      el.addEventListener('mouseenter', () => { dot.classList.add('hovering'); ring.classList.add('hovering'); });
+      el.addEventListener('mouseleave', () => { dot.classList.remove('hovering'); ring.classList.remove('hovering'); });
+    });
+  }
 
   // Active nav on scroll
   const sections = document.querySelectorAll('section[id], footer');
